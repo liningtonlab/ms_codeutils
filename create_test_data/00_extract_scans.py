@@ -33,11 +33,11 @@ def mzml(file_path: Union[str, Path], scan_low, scan_high, min_intensity: int = 
         #     if fn != 1:
         #         continue
         scan_number = spec.ID
-        if scan_number < scan_low:
-            continue
-        if scan_number > scan_high:
-            print("End of useful scans")
-            break
+        # if scan_number < scan_low:
+        #     continue
+        # if scan_number > scan_high:
+        #     print("End of useful scans")
+        #     break
         retention_time = round(spec.scan_time_in_minutes(), 3)
         for peak in spec.peaks("raw"):
             mz = round(peak[0], 4)
@@ -63,5 +63,7 @@ scan_low = df.LowScan.min()
 scan_high = df.HighScan.max()
 
 for f in mzml_dir.glob("*.mzml"):
+    if "BLANK" in f.name:
+        continue
     mzdf = mzml(f, scan_low, scan_high, min_intensity=100)
     mzdf.to_csv(HERE / Path(f.stem).with_suffix(".csv"), index=False)
